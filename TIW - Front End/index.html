@@ -1,0 +1,118 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Today I'm Watching</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <!-- Place favicon.ico in the root directory -->
+
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/main.css">
+  <script src="js/vendor/modernizr-2.8.3.min.js"></script>
+</head>
+
+<body>
+  <h1>Today I'm Watching...</h1>
+  <h2>Your Daily Netflix Suggestion</h2>
+
+  <main>
+    <div id="app">
+
+      <div id="poster">
+        <img src="img/movie-poster.jpg" />
+      </div>
+
+      <div id="movie-card">
+
+        <div id="title">
+          <div class="wrapper title-text">
+            <h3>Charlie's Country</h3>
+            <ul>
+              <li>2013</li>
+              <li>104 min</li>
+              <li>Drama</li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="information">
+          <div class="wrapper">
+            <section>
+              <h4>Plot Description</h4>
+              <p>Blackfella Charlie is out of sorts. The intervention is making life more difficult on his remote community, what with the proper policing of whitefella laws now. So Charlie takes off, to live the old way, but in so doing sets off a chain
+                of events in his life that has him return to his community chastened, and somewhat the wiser.</p>
+            </section>
+            <section>
+              <h4>Rating</h4>
+              <div class="rating">
+                <p>IMDB: </p>
+                <p>7.2</p>
+              </div>
+              <p><a href="#">See entry on IMDB</a></p>
+            </section>
+            <section>
+              <h4>Available Countries</h4>
+              <p>
+                <span class="label label-secondary"><span class="flag-icon flag-icon-us"></span> US</span>
+                <span class="label label-secondary"><span class="flag-icon flag-icon-de"></span> DE</span>
+                <span class="label label-secondary"><span class="flag-icon flag-icon-ca"></span> CA</span>
+                <span class="label label-secondary"><span class="flag-icon flag-icon-se"></span> SE</span>
+              </p>
+            </section>
+            <section>
+              <div class="login">
+                <button>Login</button>
+                <p class="text-secondary" id="login">Or <a href="/signup/">signup now</a> to be able to mark movies as watched and only get unique recommendations.</p>
+              </div>
+              <div id="region-select">
+                <label class="text-secondary">Current Region: </label>
+                <select id="region" name="region">
+                  <option value='us' selected>United States of America</option>
+                  <option value='de'>Germany</option>
+                  <option value='ca'>Canada</option>
+                  <option value='se'>Sweden</option>
+                </select>
+                <button id="suggest-new">Suggest New</button>
+              </div>
+
+            </section>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+
+  <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+  <script>
+    window.jQuery || document.write('<script src="js/vendor/jquery-1.12.0.min.js"><\/script>')
+  </script>
+  <script src="js/plugins.js"></script>
+  <script src="js/main.js"></script>
+
+  <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+  <script>
+    (function(b, o, i, l, e, r) {
+      b.GoogleAnalyticsObject = l;
+      b[l] || (b[l] =
+        function() {
+          (b[l].q = b[l].q || []).push(arguments)
+        });
+      b[l].l = +new Date;
+      e = o.createElement(i);
+      r = o.getElementsByTagName(i)[0];
+      e.src = 'https://www.google-analytics.com/analytics.js';
+      r.parentNode.insertBefore(e, r)
+    }(window, document, 'script', 'ga'));
+    ga('create', 'UA-XXXXX-X', 'auto');
+    ga('send', 'pageview');
+  </script>
+</body>
+
+</html>

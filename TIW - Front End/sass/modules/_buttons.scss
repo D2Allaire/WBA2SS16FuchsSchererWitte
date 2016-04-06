@@ -1,0 +1,19 @@
+/*
+BUTTONS
+*/
+
+button {
+  font-weight: 300;
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  color: $color-bg;
+  background-color: $color-bg-title;
+  padding: 5px 15px;
+  border: none;
+  vertical-align: middle;
+
+  &#suggest-new {
+    float: right;
+    background-color: #4e1f37;
+  }
+}

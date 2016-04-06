@@ -1,0 +1,65 @@
+/*
+LAYOUT
+*/
+div#app {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+/* Movie Poster */
+div#poster {
+  height: 450px;
+  box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+/* Movie Card */
+div#movie-card {
+  width: 600px;
+  box-sizing: border-box;
+  box-shadow: 2px 8px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  div#title {
+    width: 600px;
+    background-color: $color-bg-title;
+    box-sizing: border-box;
+    h3 {
+      padding-top: 1rem;
+      margin: 0;
+    }
+    ul {
+      margin: 0;
+      padding: 1rem 0 1.5rem;
+      li {
+        display: inline-block;
+        &:not(:last-of-type) {
+          padding-right: 3rem;
+        }
+      }
+    }
+  }
+  div#information {
+    background-color: $color-bg;
+    section {
+      padding: 1rem 0;
+      &:not(:first-of-type) {
+        border-top: 1px solid #cfcfcf;
+      }
+    }
+
+
+  }
+}
+
+div {
+  &.wrapper {
+    width: 90%;
+    margin-left: 15px;
+  }
+
+  &#region-select {
+    margin-top: 10px;
+    padding-bottom: 20px;
+  }
+}
+
+section:nth-child(2) > p {
+  margin-top: 0;
+}

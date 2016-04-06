@@ -1,0 +1,85 @@
+/*
+TYPOGRAPHY
+*/
+html {
+  font-size: 62.5%;
+  font-family: $font-primary;
+}
+
+body {
+  font-size: 1.6rem;
+}
+
+h1, h2 {
+  color: $title-color;
+  font-weight: 300;
+  text-align: center;
+}
+
+h1 {
+  font-family: $font-secondary;
+  font-size: 4.8rem;
+  margin-bottom: 0;
+}
+
+h2 {
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  margin-top: -8px;
+  margin-left: 15px;
+}
+
+h3 {
+  font-size: 2.6rem;
+  text-transform: uppercase;
+  font-weight: 300;
+  color: $title-color;
+}
+
+h4 {
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: $color-secondary;
+  margin: 0px 0px;
+}
+
+p {
+  color: $color-primary;
+  margin: 5px 0px;
+
+  &#login {
+    display: inline-block;
+    width: 70%;
+    vertical-align: middle;
+    margin-left: 10px;
+  }
+}
+
+div.rating > p {
+  display: inline-block;
+  vertical-align: middle;
+
+  &:nth-child(2) {
+    background-color: #0e6507;
+    color: $color-bg;
+    padding: 1px 4px;
+    font-style: normal;
+    font-size: 1.0rem;
+  }
+}
+
+a {
+  color: $color-link;
+  text-decoration: none;
+}
+
+li {
+  color: $title-color;
+  font-size: 1.5rem;
+}
+
+.text-secondary {
+  font-size: 1.4rem;
+  color: #747474;
+}
