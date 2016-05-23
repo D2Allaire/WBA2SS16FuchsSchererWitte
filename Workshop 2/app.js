@@ -13,9 +13,7 @@ var movies = [
      imdb_id: "tt0898367", imdb_rating: "7.3"}
 ]
 
-var user1watched = [
-    {imdb_id: ""}
-];
+var user1watched = [];
 
 app.get('/', function (req, res) {
     var filteredData = movies.filter(function (value, index, arr) {
