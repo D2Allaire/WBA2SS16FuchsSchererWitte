@@ -7,7 +7,6 @@ var db = redis.createClient();
 var app = express();
 
 app.get('/movie', function (req, res) {
-    var movie;
     db.srandmember("region:us:movies", function(err, rep) {
         
         // rep is a random IMDB id from the database
@@ -16,7 +15,8 @@ app.get('/movie', function (req, res) {
               // rep is the id of the movie key-value pair associated with the previous IMDB id
               db.get("movie:"+rep, function(err, rep) {
                   // rep is the value of movie:id, so a JSON object in string format
-                  movie = JSON.parse(rep);
+                  var movie = JSON.parse(rep);
+                  res.status(200).type('json').json(movie);
               });
           });
             
@@ -27,5 +27,7 @@ app.get('/movie', function (req, res) {
         }
     });
     
-    res.status(200).type('json').json(movie);
 });
+
+
+app.listen(3000);
