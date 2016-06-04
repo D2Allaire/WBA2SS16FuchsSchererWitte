@@ -18,7 +18,7 @@ SADD region:de:movies tt0898367
 SADD region:se:movies tt0898367
 SADD region:us:movies tt0898367
 
-SET user:10 "{ name: "User", email: "test@test.de", password: "clearpw" }"
+SET user:10 '{ name: "User", email: "test@test.de", password: "clearpw" }'
 HSET users User 10
 
 SADD user:10:watchlist tt0898367
@@ -26,10 +26,10 @@ SADD user:10:watchlist tt0898367
 
 ## Example Requests
 ```sql
-// Get 5 movies (Standard API request when user is not logged in):
-SRANDMEMBER region:us:movies 5 => ["tt3244512", "tt0898367", ...]
+// Get 1 random movie (Standard API request when user is not logged in):
+SRANDMEMBER region:us:movies => "tt3244512"
 
-// Response is an array of 5 IMDB ids. Get the internal database id for each one:
+// Response is the IMDB id of a random movie. Get the internal database id:
 HGET movies tt3244512 => 4
 
 // Response is the internal database id. Get the movie object associated with that id:
@@ -39,10 +39,10 @@ GET movie:4 => '{ title: "Charlies Country", year: "2013", genre: "Drama", imdb_
 HGET users User => 10
 
 // Add a movie to the watchlist of a given user:
-SADD users tt0898367
+SADD user:10:watchlist tt0898367
 
 // Get movies from a specific region that are not in the watchlist of a given user:
-SDIFF region:us:movies user:10:watchlist => ["tt3244512"] // Nicht beschränkt auf 5 :/
+SDIFF region:us:movies user:10:watchlist => ["tt3244512"]
 
 ```
 
