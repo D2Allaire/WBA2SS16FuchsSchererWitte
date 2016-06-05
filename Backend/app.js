@@ -32,13 +32,16 @@ app.get('/movie/:region', function (req, res) {
 
 app.post('/user', jsonParser, function(req, res) {
     var newUser = req.body;
+    var password = newUser.password;
     var hashedPassword = passwordHash.generate(newUser.password);
     db.incr('id:user', function (err,rep) {
         newUser.id = rep;
+        newUser.password = password
         newUser.password = hashedPassword;
         db.set('user:' + newUser.id, JSON.stringify(newUser), function(err, rep) {
             db.hset("users", newUser.name, newUser.id, function (err, rep) {
                 res.json(newUser);
+                console.log(passwordHash.verify(password, hashedPassword));
                 console.log(hashedPassword);
             });
         });   
@@ -61,12 +64,14 @@ app.put('/user/:id', jsonParser, function(req, res) {
        if(rep == 1 ) {
            var updatedUser = req.body;
            updatedUser.id = req.params.id;
+           var updatedUserPassword = updatedUser.password;
            var updatedPassword = passwordHash.generate(updatedUser.password);
            updatedUser.password = updatedPassword;
            db.set('user:' + req.params.id, JSON.stringify(updatedUser), function(err, rep) {
                db.hset("users", updatedUser.name, updatedUser.id, function (err, rep) {
                    res.json(updatedUser);
                    console.log(updatedPassword);
+                   console.log(passwordHash.verify(updatedUserPassword, updatedPassword));
                });
            });
        }
