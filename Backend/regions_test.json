@@ -1,0 +1,14 @@
+{
+    "regions":[
+        {
+            "name": "Belgium",
+            "id": 26,
+            "code": "be"
+        },
+        {
+            "name": "Canada",
+            "id": 33,
+            "code": "ca"
+        }
+    ]
+}
