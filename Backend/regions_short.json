@@ -1,0 +1,84 @@
+{
+    "regions" : [
+        {
+            "name": "Australia",
+            "id": 22,
+            "code": "au"
+        },
+        {
+            "name": "Belgium",
+            "id": 26,
+            "code": "be"
+        },
+        {
+            "name": "Brazil",
+            "id": 29,
+            "code": "br"
+        },
+        {
+            "name": "Canada",
+            "id": 33,
+            "code": "ca"
+        },
+        {
+            "name": "Chile",
+            "id": 35,
+            "code": "cl"
+        },
+        {
+            "name": "France",
+            "id": 45,
+            "code": "fr"
+        },
+        {
+            "name": "Germany",
+            "id": 39,
+            "code": "de"
+        },
+        {
+            "name": "India",
+            "id": 337,
+            "code": "in"
+        },
+        {
+            "name": "Ireland",
+            "id": 55,
+            "code": "ie"
+        },
+        {
+            "name": "Mexico",
+            "id": 65,
+            "code": "mx"
+        },
+        {
+            "name": "Netherlands",
+            "id": 67,
+            "code": "nl"
+        },
+        {
+            "name": "Norway",
+            "id": 68,
+            "code": "no"
+        },
+        {
+            "name": "Peru",
+            "id": 71,
+            "code": "pe"
+        },
+        {
+            "name": "Sweden",
+            "id": 73,
+            "code": "se"
+        },
+        {
+            "name": "United Kingdom",
+            "id": 46,
+            "code": "uk"
+        },
+        {
+            "name": "United States",
+            "id": 78,
+            "code": "us"
+        }
+    ]
+}
