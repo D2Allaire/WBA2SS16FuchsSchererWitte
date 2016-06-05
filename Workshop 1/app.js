@@ -9,14 +9,12 @@ fs.readFile(__dirname+"/wolkenkratzer.json",  'utf8', function(err, data) {
     // Array sortieren
     obj.wolkenkratzer.sort(function(a,b){
       return b.hoehe - a.hoehe;
-    })
-
-    	console.log();
+    });
 
       // sortiert in neue Datei schreiben, vorher JS-Objekt wieder in JSON umwandeln
       fs.writeFile(__dirname+"/wolkenkratzer_sortiert.json", JSON.stringify(obj.wolkenkratzer), function(err){
       if(err) throw err;
-    })
+    });
 
     console.log("Sortierte Ausgabe");
 
