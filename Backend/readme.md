@@ -84,3 +84,8 @@ DELETE /user/:id/watchlist => Deletes an existing entry from a users watchlist (
 GET /user/:id/movie/:region => Returns movies from a specified region that are not in the watchlist of a specified user
 GET /movies/:region => Returns all movies (imdb_ids) from a specified region (array)
 ```
+
+### TODO (Future updates)
+- Use hashids instead of simple incrementing ids for increased security.
+- Add authentification to only allow authorized users to access API.
+- Allow filtering additionally by genre.
