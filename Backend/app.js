@@ -78,7 +78,23 @@ app.post('/user/:id/watchlist', jsonParser, function(req, res) {
 		    res.status(503).type('text').send("Couldn't insert the movie(s). Please try again.");
 	    }
     });
-})
+});
+
+app.get('/user/:id/watchlist', function(req, res) {
+    
+     db.smembers('user:' + req.params.id +':watchlist', function(err, rep) {
+            
+         if (rep) {
+         var members = JSON.stringify(rep);
+         console.log(members);
+         res.status(200).type('json').json(members);
+         
+         }
+         else {
+             res.status(404).type('text').send("Watchlist nicht vorhanden");
+         }
+     });
+});
 
 
 app.listen(3000);
