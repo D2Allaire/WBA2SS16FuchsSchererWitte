@@ -80,7 +80,6 @@ app.post('/user/:id/watchlist', jsonParser, function(req, res) {
     });
 });
 
-
 app.get('/user/:id/movie/:region', function(req, res) {
     var userID = req.params.id;
     var region = req.params.region;
@@ -102,6 +101,20 @@ app.get('/user/:id/movie/:region', function(req, res) {
             res.status(404).type('text').send("No unwatched movies found.");
         }
     });
+app.get('/user/:id/watchlist', function(req, res) {
+    
+     db.smembers('user:' + req.params.id +':watchlist', function(err, rep) {
+            
+         if (rep) {
+         var members = JSON.stringify(rep);
+         console.log(members);
+         res.status(200).type('json').json(members);
+         
+         }
+         else {
+             res.status(404).type('text').send("Watchlist nicht vorhanden");
+         }
+     });
 });
 
 app.get('/movies/:region', function(req, res) {
