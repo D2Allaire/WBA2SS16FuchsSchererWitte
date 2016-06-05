@@ -53,7 +53,7 @@ POST /user => Creates a new user (accepts JSON in following format)
     {
       "name": "D2Allaire",
       "email": "contact@ewitte.me"
-      "password": "12345" @TODO Add Encryption
+      "password": "12345"
     }
 GET /user/:id => Returns the selected user
 PUT /user/:id => Updates an existing user (accepts JSON in same format as above)
