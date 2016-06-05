@@ -80,6 +80,28 @@ app.post('/user/:id/watchlist', jsonParser, function(req, res) {
     });
 });
 
+app.get('/user/:id/watchlist', function(req, res) {
+     db.smembers('user:' + req.params.id +':watchlist', function(err, rep) {
+         if (rep) {
+         res.status(200).type('json').json(rep);
+         }
+         else {
+             res.status(404).type('text').send("Watchlist nicht vorhanden");
+         }
+     });
+});
+
+app.delete('/user/:id/watchlist', jsonParser, function(req, res) {
+    var movies = req.body.items;
+    db.srem("user:"+req.params.id+":watchlist", movies, function(err, rep) {
+        if (rep > 0) {
+            res.status(200).type('text').send("Movie deleted");
+        } else {
+            res.status(503).type('text').send("Couldn't delete.");
+        }
+    });
+});
+
 app.get('/user/:id/movie/:region', function(req, res) {
     var userID = req.params.id;
     var region = req.params.region;
@@ -101,20 +123,6 @@ app.get('/user/:id/movie/:region', function(req, res) {
             res.status(404).type('text').send("No unwatched movies found.");
         }
     });
-app.get('/user/:id/watchlist', function(req, res) {
-    
-     db.smembers('user:' + req.params.id +':watchlist', function(err, rep) {
-            
-         if (rep) {
-         var members = JSON.stringify(rep);
-         console.log(members);
-         res.status(200).type('json').json(members);
-         
-         }
-         else {
-             res.status(404).type('text').send("Watchlist nicht vorhanden");
-         }
-     });
 });
 
 app.get('/movies/:region', function(req, res) {
