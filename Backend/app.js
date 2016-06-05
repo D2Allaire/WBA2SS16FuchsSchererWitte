@@ -6,8 +6,9 @@ var db = redis.createClient();
 
 var app = express();
 
-app.get('/movie', function (req, res) {
-    db.srandmember("region:us:movies", function(err, rep) {
+app.get('/movie/:region', function (req, res) {
+    var region = req.params.region;
+    db.srandmember("region:"+region+":movies", function(err, rep) {
         
         // rep is a random IMDB id from the database
         if (rep) {
@@ -26,7 +27,6 @@ app.get('/movie', function (req, res) {
             res.status(404).type('text').send('Keine Filme gefunden.');
         }
     });
-    
 });
 
 app.post('/user', jsonParser, function(req, res) {
@@ -78,7 +78,38 @@ app.post('/user/:id/watchlist', jsonParser, function(req, res) {
 		    res.status(503).type('text').send("Couldn't insert the movie(s). Please try again.");
 	    }
     });
-})
+});
 
+
+app.get('/user/:id/movie/:region', function(req, res) {
+    var userID = req.params.id;
+    var region = req.params.region;
+    
+    db.sdiff("region:"+region+":movies", "user:"+userID+":watchlist", function(err, rep) {
+        // rep is an array with all movies from region that are not in the user watchlist
+        if (rep) {
+            var randomMovie = rep[Math.floor((Math.random()*rep.length))];
+            db.hget("movies", randomMovie, function(err, rep) {
+                // rep is the id of the movie key-value pair associated with the previous IMDB id
+                db.get("movie:"+rep, function(err, rep) {
+                    // rep is the value of movie:id, so a JSON object in string format
+                    var movie = JSON.parse(rep);
+                    res.status(200).type('json').json(movie);
+                });
+            });
+        }
+        else {
+            res.status(404).type('text').send("No unwatched movies found.");
+        }
+    });
+});
+
+app.get('/movies/:region', function(req, res) {
+    db.smembers("region:"+req.params.region+":movies", function(err, rep) {
+        if (rep) {
+            res.status(200).type('json').send(JSON.stringify(rep));
+        }
+    });
+});
 
 app.listen(3000);
