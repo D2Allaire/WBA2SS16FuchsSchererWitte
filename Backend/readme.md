@@ -24,7 +24,7 @@ HSET users User 10
 SADD user:10:watchlist tt0898367
 ```
 
-## Example Requests
+## Example Database Requests
 ```sql
 // Get 1 random movie (Standard API request when user is not logged in):
 SRANDMEMBER region:us:movies => "tt3244512"
@@ -46,3 +46,23 @@ SDIFF region:us:movies user:10:watchlist => ["tt3244512"]
 
 ```
 
+## REST API
+```http
+GET /movie/:region => Returns a random movie from specified region
+POST /user => Creates a new user (accepts JSON in following format)
+    {
+      "name": "D2Allaire",
+      "email": "contact@ewitte.me"
+      "password": "12345" @TODO Add Encryption
+    }
+GET /user/:id => Returns the selected user
+PUT /user/:id => Updates an existing user (accepts JSON in same format as above)
+POST /user/:id/watchlist => Adds one or multiple entries to a users watchlist (accepts JSON in following format)
+    {
+      "items": ["tt213213", "tt123213"]
+    }
+GET /user/:id/watchlist => Returns the watchlist of a user (array)
+DELETE /user/:id/watchlist => Deletes an existing entry from a users watchlist (accepts JSON in same format as above)
+GET /user/:id/movie/:region => Returns movies from a specified region that are not in the watchlist of a specified user
+GET /movies/:region => Returns all movies (imdb_ids) from a specified region (array)
+```
