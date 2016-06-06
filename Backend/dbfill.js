@@ -12,7 +12,7 @@ var regions;
 async.series([
     // Parse region JSON file
     function (callback) {
-        fs.readFile(__dirname + "/regions_short.json", 'utf8', function (err, data) {
+        fs.readFile(__dirname + "/regions_test.json", 'utf8', function (err, data) {
             if (err) throw err;
             console.log(chalk.green("Parsing " + __dirname + "/regions_short.json"));
             var temp = JSON.parse(data);
@@ -20,16 +20,18 @@ async.series([
             callback();
         });
     },
-    // Parse movie testfile
+    // Loop through all regions and insert movies
     function (callback) {
         console.log(regions);
+        
+        // Loop through all regions
         async.forEachSeries(regions, function (region, callback) {
             console.log(chalk.yellow("Processing region: " + region.name));
 
             async.series([
                 // Make Netflix API request for current region, store movies in movies
                 function (callback) {
-                    unirest.get("https://unogs-unogs-v1.p.mashape.com/api.cgi?q=get%3Anew9999-!1900,2017-!0,5-!7,10-!0-!Movie-!Any-!Any-!gt100&t=ns&cl=" + region.id + "&st=adv&ob=Date&p=1&sa=and")
+                    unirest.get("https://unogs-unogs-v1.p.mashape.com/api.cgi?q=get%3Anew9999-!1900,2017-!0,5-!7,10-!0-!Movie-!Any-!Any-!gt100&t=ns&cl=" + region.id + "&st=adv&ob=Date&p=2&sa=and")
                         .header("X-Mashape-Key", "augKdKBQYNmshFgSalRFx2WUP4DEp1Z23Hajsn48B26JtFAcdB")
                         .header("Accept", "application/json")
                         .end(function (result) {
@@ -39,7 +41,9 @@ async.series([
                             callback();
                         });
                 },
+                // Loop through all movies and insert
                 function (callback) {
+                    // Loop through movies
                     async.forEachSeries(movies, function (movieArr, callback) {
                         console.log("Inserting movie.");
                         var movie = {};
@@ -48,12 +52,14 @@ async.series([
                         movie.imdb_id = movieArr[11];
 
                         console.log(movie.imdb_id);
-
-                        db.hget("movies", movie.imdb_id, function (err, rep) {
-                            if (rep) {
+                        
+                        // Check if movie is already in database
+                        db.hexists("movies", movie.imdb_id, function(err, rep) {
+                            if (rep == 1) {
                                 console.log(chalk.red("Movie " + movie.imdb_id + " already exists, adding region."));
                                 async.parallel([
                                     function(callback) {
+                                        // Add movie to region
                                         db.sadd("region:" + region.code + ":movies", movie.imdb_id, function(err, rep) {
                                             if (rep > 0) {
                                                 console.log("Movie added to region.");
@@ -64,6 +70,7 @@ async.series([
                                         });
                                     },
                                     function(callback) {
+                                        // Add region to movie
                                         db.sadd("movie:" + rep + ":regions", region.code, function(err, rep) {
                                             if (rep > 0) {
                                                 console.log("Region already added to movie.");
@@ -76,7 +83,6 @@ async.series([
                                 ], function(err) {
                                     callback();
                                 });
-                 
                             } else if (rep == 0) {
                                 async.series([
                                     // Get IMDB Data from OMDB API
@@ -85,6 +91,7 @@ async.series([
                                             .header("Accept", "application/json")
                                             .end(function (result) {
                                                 var parsedMovie = result.body;
+                                                movie.title = parsedMovie.Title;
                                                 movie.plot = parsedMovie.Plot;
                                                 movie.genre = parsedMovie.Genre;
                                                 movie.poster = parsedMovie.Poster;
