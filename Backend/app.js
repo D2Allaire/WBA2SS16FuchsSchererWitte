@@ -2,25 +2,47 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var jsonParser = bodyParser.json();
 var redis = require("redis");
+var async = require("async");
 var db = redis.createClient();
-
 var app = express();
 
 app.get('/movie/:region', function (req, res) {
     var region = req.params.region;
+    var movie_id;
+    var movie = {};
     db.srandmember("region:"+region+":movies", function(err, rep) {
-        
         // rep is a random IMDB id from the database
+        movie_imdb = rep;
         if (rep) {
-          db.hget("movies", rep, function(err, rep) {
-              // rep is the id of the movie key-value pair associated with the previous IMDB id
-              db.get("movie:"+rep, function(err, rep) {
-                  // rep is the value of movie:id, so a JSON object in string format
-                  var movie = JSON.parse(rep);
-                  res.status(200).type('json').json(movie);
-              });
-          });
-            
+            async.series([
+                function(callback) {
+                    db.hget("movies", movie_imdb, function(err, rep) {
+                        // rep is the id of the movie key-value pair associated with previous IMDB id.
+                        console.log("Getting internal DB id.");
+                        movie_id = rep;
+                        callback();
+                    });
+                },
+                function (callback) {
+                    db.get("movie:" + movie_id, function(err, rep) {
+                        // rep is the value of movie:id, so a JSON object in string format
+                        console.log("Getting  JSON object.");
+                        movie = JSON.parse(rep);
+                        console.log(movie);
+                        callback();
+                    });
+                },
+                function(callback) {
+                    db.smembers("movie:" + movie_id + ":regions", function(err, rep) {
+                        // rep is an array with all regions where the movie is available
+                        console.log(movie);
+                        movie.regions = rep;
+                        callback();
+                    });
+                }
+            ], function(err) {
+                res.status(200).type('json').json(movie);
+            });
         }
         
         else {
