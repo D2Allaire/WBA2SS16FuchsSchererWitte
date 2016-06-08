@@ -18,7 +18,7 @@ app.get("/", function(req, res){
 
 
 app.get("/movie/de", function(req, res){
-    fs.readFile("./index.ejs", {encoding:"utf-8"}, function(err, filestring){
+    fs.readFile("./test_website.ejs", {encoding:"utf-8"}, function(err, filestring){
         if(err) {
             throw err;
             console.log("Etwas ist schief gegangen");
