@@ -39,7 +39,9 @@ jspm_packages
 # Redis Directories
 redis-stable
 
-# VSC specifil files
+# VSC specific files
 typings
 jsconfig.json
 
+# Environment Variables
+.env
