@@ -1,61 +1,61 @@
+require('dotenv').config();
 var express = require('express');
 var bodyParser = require('body-parser');
 var jsonParser = bodyParser.json();
 var redis = require("redis");
 var async = require("async");
+var passport = require('passport')    
+var BasicStrategy = require('passport-http').BasicStrategy
 var db = redis.createClient();
 var app = express();
 
-app.get('/movie/:region', function (req, res) {
-    var region = req.params.region;
-    var movie_id;
-    var movie = {};
-    db.srandmember("region:"+region+":movies", function(err, rep) {
-        // rep is a random IMDB id from the database
-        movie_imdb = rep;
-        if (rep) {
-            async.series([
-                function(callback) {
-                    db.hget("movies", movie_imdb, function(err, rep) {
-                        // rep is the id of the movie key-value pair associated with previous IMDB id.
-                        console.log("Getting internal DB id.");
-                        movie_id = rep;
-                        callback();
-                    });
-                },
-                function (callback) {
-                    db.get("movie:" + movie_id, function(err, rep) {
-                        // rep is the value of movie:id, so a JSON object in string format
-                        console.log("Getting  JSON object.");
-                        movie = JSON.parse(rep);
-                        console.log(movie);
-                        callback();
-                    });
-                },
-                function(callback) {
-                    db.smembers("movie:" + movie_id + ":regions", function(err, rep) {
-                        // rep is an array with all regions where the movie is available
-                        console.log(movie);
-                        movie.regions = rep;
-                        callback();
-                    });
-                }
-            ], function(err) {
-                res.status(200).type('json').json(movie);
-            });
-        }
+// HTTP Basic Auth
+passport.use(new BasicStrategy(
+  function(username, password, done) {
+    if (username.valueOf() === process.env.API_USER &&
+      password.valueOf() === process.env.API_PW)
+      return done(null, true);
+    else
+      return done(null, false);
+  }
+));
 
-        else {
-            res.status(404).type('text').send('Keine Filme gefunden.');
-        }
-    });
+app.use(passport.initialize());
+
+/**
+ * GET /movies[?r=region&c=count]
+ * Returns either a specified amount (random in that case) or all movies from the specified region.
+ */
+app.get('/movies', passport.authenticate('basic', {session: false}), function (req, res) {
+    var region = req.query.r || "us"; // Set default region to US
+    var count = req.query.c || 1; // Returns 1 movie by default
+
+    if (count == "all") {
+        db.smembers("region:" + region + ":movies", function (err, rep) {
+            if (err) throw err;
+            if (rep) { // rep is an array of IMDB IDs from :region
+                getMovies(rep, res);
+            }
+        });
+    } else {
+        db.srandmember("region:" + region + ":movies", count, function (err, rep) {
+            if (err) throw err;
+            if (rep) { // rep is an array of :count random IMDB IDs from :region
+                getMovies(rep, res);
+            }
+        });
+    }
 });
 
-app.post('/user', jsonParser, function(req, res) {
+/**
+ * POST /user
+ * Creates a new user in the database with the provided user object in JSON format.
+ */
+app.post('/user', jsonParser, function (req, res) {
     var newUser = req.body;
-    db.incr('id:user', function (err,rep) {
+    db.incr('id:user', function (err, rep) {
         newUser.id = rep;
-        db.set('user:' + newUser.id, JSON.stringify(newUser), function(err, rep) {
+        db.set('user:' + newUser.id, JSON.stringify(newUser), function (err, rep) {
             db.hset("users", newUser.name, newUser.id, function (err, rep) {
                 res.json(newUser);
             });
@@ -63,8 +63,12 @@ app.post('/user', jsonParser, function(req, res) {
     });
 });
 
-app.get('/user/:id', function(req, res) {
-    db.get('user:' + req.params.id, function(err, rep) {
+/**
+ * GET /user
+ * Returns a user object from the database in JSON format.
+ */
+app.get('/user/:id', function (req, res) {
+    db.get('user:' + req.params.id, function (err, rep) {
         if (rep) {
             res.type('json').send(rep);
         }
@@ -74,48 +78,65 @@ app.get('/user/:id', function(req, res) {
     });
 });
 
-app.put('/user/:id', jsonParser, function(req, res) {
-   db.exists('user:' + req.params.id, function(err, rep) {
-       if(rep == 1 ) {
-           var updatedUser = req.body;
-           updatedUser.id = req.params.id;
-           db.set('user:' + req.params.id, JSON.stringify(updatedUser), function(err, rep) {
-               db.hset("users", updatedUser.name, updatedUser.id, function (err, rep) {
-                   res.json(updatedUser);
-               });
-           });
-       }
-       else {
-           res.status(404).type('text').send("Der user mit der ID " + req.param.id + " ist nicht vorhanden.");
-       }
-   });
-});
-
-app.post('/user/:id/watchlist', jsonParser, function(req, res) {
-    var movies = req.body.items;
-    db.sadd("user:"+req.params.id+":watchlist", movies, function(err, rep) {
-	    if (rep > 0) {
-		    res.status(200).type('text').send("Movie(s) added to watchlist.");
-	    } else {
-		    res.status(503).type('text').send("Couldn't insert the movie(s). Please try again.");
-	    }
+/**
+ * PUT /user
+ * Updates an existing user record in the database by overwriting the old one.
+ */
+app.put('/user/:id', jsonParser, function (req, res) {
+    db.exists('user:' + req.params.id, function (err, rep) {
+        if (rep == 1) {
+            var updatedUser = req.body;
+            updatedUser.id = req.params.id;
+            db.set('user:' + req.params.id, JSON.stringify(updatedUser), function (err, rep) {
+                db.hset("users", updatedUser.name, updatedUser.id, function (err, rep) {
+                    res.json(updatedUser);
+                });
+            });
+        }
+        else {
+            res.status(404).type('text').send("Der user mit der ID " + req.param.id + " ist nicht vorhanden.");
+        }
     });
 });
 
-app.get('/user/:id/watchlist', function(req, res) {
-     db.smembers('user:' + req.params.id +':watchlist', function(err, rep) {
-         if (rep) {
-         res.status(200).type('json').json(rep);
-         }
-         else {
-             res.status(404).type('text').send("Watchlist nicht vorhanden");
-         }
-     });
+/**
+ * POST /user/:id/watchlist
+ * Creates one or multiple new entries in a user's watchlist (with an IMDB ID).
+ */
+app.post('/user/:id/watchlist', jsonParser, function (req, res) {
+    var movies = req.body.items;
+
+    db.sadd("user:" + req.params.id + ":watchlist", movies, function (err, rep) {
+        if (rep > 0) {
+            res.status(200).type('text').send("Movie(s) added to watchlist.");
+        } else {
+            res.status(503).type('text').send("Couldn't insert the movie(s). Please try again.");
+        }
+    });
 });
 
-app.delete('/user/:id/watchlist', jsonParser, function(req, res) {
+/**
+ * GET /user/:id/watchlist
+ * Returns the watchlist of a given user as an array (of IMDB IDs).
+ */
+app.get('/user/:id/watchlist', function (req, res) {
+    db.smembers('user:' + req.params.id + ':watchlist', function (err, rep) {
+        if (rep) {
+            res.status(200).type('json').json(rep);
+        } else {
+            res.status(404).type('text').send("Watchlist nicht vorhanden");
+        }
+    });
+});
+
+/**
+ * DELETE /user/:id/watchlist
+ * Deletes one or multiple entries in a user's watchlist.
+ */
+app.delete('/user/:id/watchlist', jsonParser, function (req, res) {
     var movies = req.body.items;
-    db.srem("user:"+req.params.id+":watchlist", movies, function(err, rep) {
+
+    db.srem("user:" + req.params.id + ":watchlist", movies, function (err, rep) {
         if (rep > 0) {
             res.status(200).type('text').send("Movie deleted");
         } else {
@@ -124,36 +145,55 @@ app.delete('/user/:id/watchlist', jsonParser, function(req, res) {
     });
 });
 
-app.get('/user/:id/movie/:region', function(req, res) {
+/**
+ * GET /user/:id/movies[?r=region]
+ * Returns an array of movies from the specifiec region that are not in the user's watchlist.
+ */
+app.get('/user/:id/movies', function (req, res) {
     var userID = req.params.id;
-    var region = req.params.region;
+    var region = req.query.r || "us"; // Set default region to US
 
-    db.sdiff("region:"+region+":movies", "user:"+userID+":watchlist", function(err, rep) {
-        // rep is an array with all movies from region that are not in the user watchlist
+    db.sdiff("region:" + region + ":movies", "user:" + userID + ":watchlist", function (err, rep) {
+        // :rep is an array with all IMDB IDs from :region that are not in the user watchlist
         if (rep) {
-            var randomMovie = rep[Math.floor((Math.random()*rep.length))];
-            db.hget("movies", randomMovie, function(err, rep) {
-                // rep is the id of the movie key-value pair associated with the previous IMDB id
-                db.get("movie:"+rep, function(err, rep) {
-                    // rep is the value of movie:id, so a JSON object in string format
-                    var movie = JSON.parse(rep);
-                    res.status(200).type('json').json(movie);
-                });
-            });
-        }
-        else {
+            res.status(200).type('json').json(rep);
+        } else {
             res.status(404).type('text').send("No unwatched movies found.");
         }
     });
 });
 
-app.get('/movies/:region', function(req, res) {
-    db.smembers("region:"+req.params.region+":movies", function(err, rep) {
-        if (rep) {
-            res.status(200).type('json').send(JSON.stringify(rep));
+function getMovies(imdbIDs, res) {
+    var movies = [];
+    async.forEach(imdbIDs, function (imdbID, callback) {
+        var movie = {};
+        async.series([
+            function (callback) {
+                db.get("movie:" + imdbID, function (err, rep) {
+                    // rep is the value of movie:id, so a JSON object in string format
+                    movie = JSON.parse(rep);
+                    callback();
+                });
+            },
+            function (callback) {
+                db.smembers("movie:" + imdbID + ":regions", function (err, rep) {
+                    // rep is an array with all regions where the movie is available
+                    movie.regions = rep;
+                    callback();
+                });
+            }
+        ], function (err) {
+            movies.push(movie);
+            callback();
+        });
+    }, function (err) {
+        if (movies.length > 0) {
+            res.status(200).type('json').json(movies);
+        } else {
+            res.status(404).type('text').send("No movies found for this region.");
         }
     });
-});
+}
 
 app.listen(3000);
-console.log("Port 3000 ist nun aktiv");
+console.log("Dienstgeber aktiv auf Port 3000");
