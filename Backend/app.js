@@ -51,8 +51,9 @@ app.get('/movies', passport.authenticate('basic', {session: false}), function (r
  * POST /user
  * Creates a new user in the database with the provided user object in JSON format.
  */
-app.post('/user', jsonParser, function (req, res) {
+app.post('/user', passport.authenticate('basic', {session: false}), jsonParser, function (req, res) {
     var newUser = req.body;
+
     db.incr('id:user', function (err, rep) {
         newUser.id = rep;
         db.set('user:' + newUser.id, JSON.stringify(newUser), function (err, rep) {
@@ -67,13 +68,15 @@ app.post('/user', jsonParser, function (req, res) {
  * GET /user
  * Returns a user object from the database in JSON format.
  */
-app.get('/user/:id', function (req, res) {
-    db.get('user:' + req.params.id, function (err, rep) {
+app.get('/user/:id', passport.authenticate('basic', {session: false}), function (req, res) {
+    var userID = req.params.id;
+
+    db.get('user:' + userID, function (err, rep) {
         if (rep) {
             res.type('json').send(rep);
         }
         else {
-            res.status(404).type('text').send("Der user mit der ID " + req.param.id + " ist nicht vorhanden.");
+            res.status(404).type('text').send("Der User mit der ID " + userID + " ist nicht vorhanden.");
         }
     });
 });
@@ -82,19 +85,21 @@ app.get('/user/:id', function (req, res) {
  * PUT /user
  * Updates an existing user record in the database by overwriting the old one.
  */
-app.put('/user/:id', jsonParser, function (req, res) {
-    db.exists('user:' + req.params.id, function (err, rep) {
+app.put('/user/:id', passport.authenticate('basic', {session: false}), jsonParser, function (req, res) {
+    var userID = req.params.id;
+
+    db.exists('user:' + userID, function (err, rep) {
         if (rep == 1) {
             var updatedUser = req.body;
-            updatedUser.id = req.params.id;
-            db.set('user:' + req.params.id, JSON.stringify(updatedUser), function (err, rep) {
+            updatedUser.id = userID;
+            db.set('user:' + userID, JSON.stringify(updatedUser), function (err, rep) {
                 db.hset("users", updatedUser.name, updatedUser.id, function (err, rep) {
                     res.json(updatedUser);
                 });
             });
         }
         else {
-            res.status(404).type('text').send("Der user mit der ID " + req.param.id + " ist nicht vorhanden.");
+            res.status(404).type('text').send("Der user mit der ID " + userID + " ist nicht vorhanden.");
         }
     });
 });
@@ -103,7 +108,7 @@ app.put('/user/:id', jsonParser, function (req, res) {
  * POST /user/:id/watchlist
  * Creates one or multiple new entries in a user's watchlist (with an IMDB ID).
  */
-app.post('/user/:id/watchlist', jsonParser, function (req, res) {
+app.post('/user/:id/watchlist', passport.authenticate('basic', {session: false}), jsonParser, function (req, res) {
     var movies = req.body.items;
 
     db.sadd("user:" + req.params.id + ":watchlist", movies, function (err, rep) {
@@ -119,7 +124,7 @@ app.post('/user/:id/watchlist', jsonParser, function (req, res) {
  * GET /user/:id/watchlist
  * Returns the watchlist of a given user as an array (of IMDB IDs).
  */
-app.get('/user/:id/watchlist', function (req, res) {
+app.get('/user/:id/watchlist', passport.authenticate('basic', {session: false}), function (req, res) {
     db.smembers('user:' + req.params.id + ':watchlist', function (err, rep) {
         if (rep) {
             res.status(200).type('json').json(rep);
@@ -133,7 +138,7 @@ app.get('/user/:id/watchlist', function (req, res) {
  * DELETE /user/:id/watchlist
  * Deletes one or multiple entries in a user's watchlist.
  */
-app.delete('/user/:id/watchlist', jsonParser, function (req, res) {
+app.delete('/user/:id/watchlist', passport.authenticate('basic', {session: false}), jsonParser, function (req, res) {
     var movies = req.body.items;
 
     db.srem("user:" + req.params.id + ":watchlist", movies, function (err, rep) {
@@ -149,7 +154,7 @@ app.delete('/user/:id/watchlist', jsonParser, function (req, res) {
  * GET /user/:id/movies[?r=region]
  * Returns an array of movies from the specifiec region that are not in the user's watchlist.
  */
-app.get('/user/:id/movies', function (req, res) {
+app.get('/user/:id/movies', passport.authenticate('basic', {session: false}), function (req, res) {
     var userID = req.params.id;
     var region = req.query.r || "us"; // Set default region to US
 
