@@ -44,7 +44,7 @@ app.get('/movie/:region', function (req, res) {
                 res.status(200).type('json').json(movie);
             });
         }
-        
+
         else {
             res.status(404).type('text').send('Keine Filme gefunden.');
         }
@@ -59,7 +59,7 @@ app.post('/user', jsonParser, function(req, res) {
             db.hset("users", newUser.name, newUser.id, function (err, rep) {
                 res.json(newUser);
             });
-        });   
+        });
     });
 });
 
@@ -127,7 +127,7 @@ app.delete('/user/:id/watchlist', jsonParser, function(req, res) {
 app.get('/user/:id/movie/:region', function(req, res) {
     var userID = req.params.id;
     var region = req.params.region;
-    
+
     db.sdiff("region:"+region+":movies", "user:"+userID+":watchlist", function(err, rep) {
         // rep is an array with all movies from region that are not in the user watchlist
         if (rep) {
@@ -156,3 +156,4 @@ app.get('/movies/:region', function(req, res) {
 });
 
 app.listen(3000);
+console.log("Port 3000 ist nun aktiv");
