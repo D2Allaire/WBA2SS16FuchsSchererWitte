@@ -1,21 +1,25 @@
-require('dotenv').config();
-var redis = require("redis");
+require('dotenv').config({path: '../.env'});
 var fs = require('fs');
 var unirest = require('unirest');
 const chalk = require('chalk');
 var async = require('async');
 
-var db = redis.createClient();
+// Load Models
+require('../config/db').connect();
+var Movie = require('../models/movie');
+var Region = require('../models/region');
+
 var obj;
 var movies;
 var regions;
 
+
 async.series([
     // Parse region JSON file
     function (callback) {
-        fs.readFile(__dirname + "/regions_short.json", 'utf8', function (err, data) {
+        fs.readFile("../libs/regions/regions_test.json", 'utf8', function (err, data) {
             if (err) throw err;
-            console.log(chalk.green("Parsing " + __dirname + "/regions_short.json"));
+            console.log(chalk.green("Parsing " + "regions_short.json"));
             var temp = JSON.parse(data);
             regions = temp.regions;
             callback();
@@ -24,7 +28,7 @@ async.series([
     // Loop through all regions and insert movies
     function (callback) {
         console.log(regions);
-        
+
         // Loop through all regions
         async.forEachSeries(regions, function (region, callback) {
             console.log(chalk.yellow("Processing region: " + region.name));
@@ -32,7 +36,7 @@ async.series([
             async.series([
                 // Make Netflix API request for current region, store movies in movies
                 function (callback) {
-                    unirest.get("https://unogs-unogs-v1.p.mashape.com/api.cgi?q=get%3Anew9999-!1900,2017-!0,5-!7,10-!0-!Movie-!Any-!Any-!gt100&t=ns&cl=" + region.id + "&st=adv&ob=Date&p=1&sa=and")
+                    unirest.get("https://unogs-unogs-v1.p.mashape.com/api.cgi?q=get%3Anew9999-!1900,2017-!0,5-!7,10-!0-!Movie-!Any-!Any-!gt100&t=ns&cl=" + region.id + "&st=adv&ob=Date&p=3&sa=and")
                         .header("X-Mashape-Key", process.env.UNOGS)
                         .header("Accept", "application/json")
                         .end(function (result) {
@@ -42,6 +46,7 @@ async.series([
                             callback();
                         });
                 },
+
                 // Loop through all movies and insert
                 function (callback) {
                     // Loop through movies
@@ -53,38 +58,30 @@ async.series([
                         movie.imdb_id = movieArr[11];
 
                         console.log(movie.imdb_id);
-                        
+
                         // Check if movie is already in database
-                        db.exists("movie:"+movie.imdb_id, function(err, rep) {
-                            if (rep == 1) {
+                        Movie.exists(movie.imdb_id, function (result) {
+                            if (result == true) {
                                 console.log(chalk.red("Movie " + movie.imdb_id + " already exists, adding region."));
                                 async.parallel([
-                                    function(callback) {
-                                        // Add movie to region
-                                        db.sadd("region:" + region.code + ":movies", movie.imdb_id, function(err, rep) {
-                                            if (rep > 0) {
-                                                console.log("Movie added to region.");
-                                            } else {
-                                                console.log("Movie already added to region.");
-                                            }
+                                    function (callback) {
+                                        // Add region to movie
+                                        Movie.addRegion(movie.imdb_id, region.code, function (err) {
+                                            if (err) console.log(err.message);
                                             callback();
                                         });
                                     },
-                                    function(callback) {
-                                        // Add region to movie
-                                        db.sadd("movie:" + movie.imdb_id + ":regions", region.code, function(err, rep) {
-                                            if (rep > 0) {
-                                                console.log("Region added to movie.");
-                                            } else {
-                                                console.log("Region already added to movie.");
-                                            }
+                                    function (callback) {
+                                        // Add movie to region
+                                        Region.addMovie(region.code, movie.imdb_id, function (err) {
+                                            if (err) console.log(err.message);
                                             callback();
                                         });
                                     }
-                                ], function(err) {
+                                ], function (err) {
                                     callback();
                                 });
-                            } else if (rep == 0) {
+                            } else {
                                 async.series([
                                     // Get IMDB Data from OMDB API
                                     function (callback) {
@@ -92,7 +89,7 @@ async.series([
                                             .header("Accept", "application/json")
                                             .end(function (result) {
                                                 var parsedMovie = result.body;
-                                                movie.runTime = parsedMovie.Runtime;
+                                                movie.runtime = parsedMovie.Runtime;
                                                 movie.title = parsedMovie.Title;
                                                 movie.plot = parsedMovie.Plot;
                                                 movie.genre = parsedMovie.Genre;
@@ -101,27 +98,26 @@ async.series([
                                                 callback();
                                             });
                                     },
-                                    // Do the necessary database insertions
                                     function (callback) {
                                         async.parallel([
-                                            // Insert movie as a new key-value pair
+                                            // Insert movie
                                             function (callback) {
-                                                db.set('movie:' + movie.imdb_id, JSON.stringify(movie), function (err, rep) {
-                                                    console.log(chalk.blue("Inserting movie " + movie.imdb_id + "."));
+                                                console.log(chalk.blue("Inserting movie " + movie.imdb_id + "."));
+                                                Movie.create(movie, function (err, result) {
                                                     callback();
                                                 });
                                             },
                                             // Add region to movie
                                             function (callback) {
-                                                db.sadd("movie:" + movie.imdb_id + ":regions", region.code, function (err, rep) {
-                                                    console.log(chalk.blue("Adding region " + region.code + " to movie " + movie.imdb_id + "."));
+                                                Movie.addRegion(movie.imdb_id, region.code, function (err) {
+                                                    if (err) console.log(err.message);
                                                     callback();
                                                 });
                                             },
                                             // Add movie to region
                                             function (callback) {
-                                                db.sadd("region:" + region.code + ":movies", movie.imdb_id, function (err, rep) {
-                                                    console.log(chalk.blue("Adding movie " + movie.imdb_id + " to region " + region.code));
+                                                Region.addMovie(region.code, movie.imdb_id, function (err) {
+                                                    if (err) console.log(err.message);
                                                     callback();
                                                 });
                                             }
@@ -129,9 +125,8 @@ async.series([
                                             callback();
                                         });
                                     }
-
                                 ], function (err) {
-                                    console.log("Movie added.");
+                                    console.log("Movie added.")
                                     callback();
                                 });
                             }
@@ -151,5 +146,4 @@ async.series([
     }
 ], function (err) {
     console.log("All movies processed.");
-    db.quit();
 });
