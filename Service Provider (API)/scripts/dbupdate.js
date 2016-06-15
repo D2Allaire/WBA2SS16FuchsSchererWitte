@@ -17,7 +17,7 @@ var regions;
 async.series([
     // Parse region JSON file
     function (callback) {
-        fs.readFile("../libs/regions/regions_test.json", 'utf8', function (err, data) {
+        fs.readFile("../libs/regions/regions_short.json", 'utf8', function (err, data) {
             if (err) throw err;
             console.log(chalk.green("Parsing " + "regions_short.json"));
             var temp = JSON.parse(data);
@@ -36,7 +36,7 @@ async.series([
             async.series([
                 // Make Netflix API request for current region, store movies in movies
                 function (callback) {
-                    unirest.get("https://unogs-unogs-v1.p.mashape.com/api.cgi?q=get%3Anew9999-!1900,2017-!0,5-!7,10-!0-!Movie-!Any-!Any-!gt100&t=ns&cl=" + region.id + "&st=adv&ob=Date&p=3&sa=and")
+                    unirest.get("https://unogs-unogs-v1.p.mashape.com/api.cgi?q=get%3Anew9999-!1900,2017-!0,5-!7,10-!0-!Movie-!Any-!Any-!gt100&t=ns&cl=" + region.id + "&st=adv&ob=Date&p=1&sa=and")
                         .header("X-Mashape-Key", process.env.UNOGS)
                         .header("Accept", "application/json")
                         .end(function (result) {
