@@ -25,7 +25,7 @@ var that = this;
 exports.create = function(movie, callback) {
     db.set('movie:' + movie.imdb_id, JSON.stringify(movie), function (err, rep) {
         if (err) throw err;
-        callback();
+        callback(movie);
     });
 }
 

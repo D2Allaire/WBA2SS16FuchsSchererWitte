@@ -1,0 +1,8 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+    // Is git enabled
+    "git.enabled": false,
+
+    // Whether auto fetching is enabled.
+    "git.autofetch": false
+}
