@@ -1,4 +1,4 @@
-/** DB-SEAONS: Inserts all movies from /libs/seasons into corresponding sets **/
+/** DB-SEAONS: Inserts all specified movies from /libs/seasons into corresponding sets **/
 
 var fs = require('fs');
 var chalk = require('chalk');
@@ -6,7 +6,7 @@ var async = require('async');
 var redis = require('redis');
 var db = redis.createClient();
 
-var files = ["christmas.json", "halloween.json", "thanksgiving.json"];
+var files = ["christmas.json", "halloween.json"];
 
 async.forEachSeries(files, function(file, callback){
     var season;

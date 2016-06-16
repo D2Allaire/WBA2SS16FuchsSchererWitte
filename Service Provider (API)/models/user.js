@@ -73,12 +73,13 @@ exports.get = function (id, callback) {
  * Finds a user by his name
  * name: name of the user
  */
-exports.find = function(name, callback) {
+exports.find = function (name, callback) {
     // Hash 'users' stores (name -> id) pairs
     db.hget('users', name, function (err, rep) {
         if (err) throw err;
         if (rep) {
-            that.get(rep, function(err, result) {
+            // Once we have the ID, simply retrieve user:ID key
+            that.get(rep, function (err, result) {
                 if (err) {
                     callback(err);
                 } else {
@@ -148,6 +149,7 @@ exports.deleteFromWatchlist = function (id, movies, callback) {
     db.srem("user:" + id + ":watchlist", movies, function (err, rep) {
         if (err) throw err;
         if (rep > 0) {
+            // :rep is the number of deleted items
             callback();
         } else {
             callback(new Error("Couldn't delete the movie(s) from watchlist."));
@@ -164,6 +166,7 @@ exports.addToWatchlist = function (id, movies, callback) {
     db.sadd("user:" + id + ":watchlist", movies, function (err, rep) {
         if (err) throw err;
         if (rep > 0) {
+            // :rep is the number of added movies
             callback();
         } else {
             callback(new Error("Couldn't insert movie(s). Please try again."));
@@ -189,13 +192,13 @@ exports.getMovies = function (id, region, callback) {
 }
 
 /**
- * Check if user exists
+ * Check if user exists, by ID
+ * id: ID of the user
  */
 exports.exists = function (id, callback) {
-    if (typeof id)
-        db.exists('user:' + id, function (err, rep) {
-            if (err) throw err;
-            if (rep == 1) callback(true)
-            else callback(false)
-        });
+    db.exists('user:' + id, function (err, rep) {
+        if (err) throw err;
+        if (rep == 1) callback(true)
+        else callback(false)
+    });
 }

@@ -70,8 +70,14 @@ module.exports = function (app, passport, jsonParser) {
     /**
      * POST /users/:id/watchlist
      * Creates one or multiple new entries in a user's watchlist (with an IMDB ID).
+     * :movies is always an array (with one entry: ["tt232342"])
      */
     app.post('/users/:id/watchlist', passport.authenticate('basic', { session: false }), jsonParser, function (req, res) {
+        /**
+         * {
+         *      "items": ["tt342352", "tt358342"]
+         * }
+         */
         var movies = req.body.items;
         User.addToWatchlist(req.params.id, movies, function (err) {
             if (err) {

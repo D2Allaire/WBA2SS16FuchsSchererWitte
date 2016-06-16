@@ -56,6 +56,7 @@ async.forEachSeries(lists, function(list, callback) {
     var uniqueMovies = [];
     console.log(movies);
     for (var i=0; i<movies.length; i++) {
+        // Make intersection with each subarray to filter out duplicate entries
         uniqueMovies = _.union(uniqueMovies, movies[i]);
     }
     var season = {

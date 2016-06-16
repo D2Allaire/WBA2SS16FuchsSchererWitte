@@ -4,12 +4,11 @@ var unirest = require('unirest');
 const chalk = require('chalk');
 var async = require('async');
 
-// Load Models
 require('../config/db').connect();
+// Load Models
 var Movie = require('../models/movie');
 var Region = require('../models/region');
 
-var obj;
 var movies;
 var regions;
 

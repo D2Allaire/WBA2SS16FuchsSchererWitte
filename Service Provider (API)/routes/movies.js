@@ -3,7 +3,7 @@ var Movie = require('../models/movie');
 var Region = require('../models/region');
 
 /**
- * GET /movies[?r=region&c=count]
+ * GET /movies[?r=region&c=count&s=season]
  * Returns either a specified amount (random in that case) or all movies from the specified region.
  */
 module.exports = function (app, passport, jsonParser) {

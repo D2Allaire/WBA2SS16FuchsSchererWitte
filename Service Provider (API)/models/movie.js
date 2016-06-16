@@ -31,6 +31,7 @@ exports.create = function(movie, callback) {
 
 /**
  * Find and select one or multiple movies from the database by their ID
+ * ids: array of IMDB ids
  */
 exports.get = function(ids, callback) {
     var movies = [];
@@ -55,6 +56,7 @@ exports.get = function(ids, callback) {
                 db.smembers("movie:" + id + ":regions", function (err, rep) {
                     if (err) throw err;
                     if (rep.length > 0) {
+                        // rep is an array of all regions the movie is available in
                         movie.regions = rep;
                     }
                     callback();
@@ -75,6 +77,8 @@ exports.get = function(ids, callback) {
 
 /**
  * Add region to a movie in the database
+ * id: IMDB id of the movie
+ * region: region to be added (ca, de, us, ...)
  */
 exports.addRegion = function(id, region, callback) {
     db.sadd("movie:" + id + ":regions", region, function (err, rep) {
@@ -88,6 +92,7 @@ exports.addRegion = function(id, region, callback) {
 
 /**
  * Check if a movie exists in the database
+ * id: IMDB id of the movie
  */
 exports.exists = function(id, callback) {
     db.exists('movie:' + id, function (err, rep) {

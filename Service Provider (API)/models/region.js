@@ -31,6 +31,7 @@ exports.addMovie = function(region, id, callback) {
  * Get movies from this region
  * region: code of the region
  * count: limit on how many movies to retrieve
+ * season: holiday season (christmas, halloween, ...)
  */
 exports.getMovies = function(region, count, season, callback) {
     if (count == "all") {
@@ -44,7 +45,8 @@ exports.getMovies = function(region, count, season, callback) {
         } else {
             db.smembers("region:" + region + ":movies", function (err, rep) {
                 if (err) throw err;
-                if (rep) { // rep is an array of IMDB IDs from :region
+                if (rep) { 
+                    // :rep is an array of IMDB IDs from :region
                     Movie.get(rep, function (err, result) {
                         callback(err, result);
                     });
@@ -55,7 +57,7 @@ exports.getMovies = function(region, count, season, callback) {
     } else {
         if (season != null) {
             db.sinter("movies:"+season, "region:" + region + ":movies", function(err, rep) {
-                // :rep is an array with all IMDB IDs from .region that are also in the season set
+                // :rep is an array with all IMDB IDs from :region that are also in the season set
                 Movie.get(rep, function(err, result) {
                     if (err) {
                         callback(err);
@@ -74,7 +76,8 @@ exports.getMovies = function(region, count, season, callback) {
         } else {
             db.srandmember("region:" + region + ":movies", count, function (err, rep) {
                 if (err) throw err;
-                if (rep) { // rep is an array of :count random IMDB IDs from :region
+                if (rep) { 
+                    // :rep is an array of :count random IMDB IDs from :region
                     Movie.get(rep, function(err, result) {
                         callback(err, result);
                     });
