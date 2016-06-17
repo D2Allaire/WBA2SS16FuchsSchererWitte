@@ -4,11 +4,12 @@
 *      title: title,
 *      imdb_id: imdbID 
 *      year: year,
-*      runTime: runTime,
+*      runtime: runTime,
 *      plot: plot,
 *      genre: genre,
 *      poster: poster (IMDB),
 *      imdb_rating: imdbRating,
+*      language: available languages,
 *      regions: [regions]      
 * }
 */

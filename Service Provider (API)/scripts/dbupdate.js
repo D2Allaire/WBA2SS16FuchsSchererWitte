@@ -18,7 +18,7 @@ var limiter = new RateLimiter(200, 'minute');
 async.series([
     // Parse region JSON file
     function (callback) {
-        fs.readFile("../libs/regions/regions_test.json", 'utf8', function (err, data) {
+        fs.readFile("../libs/regions/regions_short.json", 'utf8', function (err, data) {
             if (err) throw err;
             console.log(chalk.green("Parsing " + "regions_short.json"));
             var temp = JSON.parse(data);
@@ -97,6 +97,7 @@ async.series([
                                                     movie.plot = parsedMovie.Plot;
                                                     movie.genre = parsedMovie.Genre;
                                                     movie.imdb_rating = parsedMovie.imdbRating;
+                                                    movie.language = parsedMovie.Language;
                                                     callback();
                                                 });
                                         },

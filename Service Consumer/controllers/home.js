@@ -31,7 +31,6 @@ module.exports = function (app, jsonParser) {
                 unirest.get('http://api.netflix.dev:3000/regions')
                     .headers({ 'Accept': 'application/json', 'Authorization': 'Basic ' + auth })
                     .end(function (response) {
-                        console.log(response.body);
                         regions = response.body;
                         callback();
                     });
@@ -52,7 +51,6 @@ module.exports = function (app, jsonParser) {
             if (err) {
                 res.status(404).type('text').send(err.message);
             } else {
-                console.log("Sending EJS.");
                 res.render('index', {
                     movie: movie,
                     regions: regions
