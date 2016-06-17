@@ -46,6 +46,7 @@
                             <li><%= movie.year %></li>
                             <li><%= movie.runtime %></li>
                             <li><%= movie.genre %></li>
+                            <li>Language: <%= movie.language %></li>
                         </ul>
                     </div>
                 </div>
@@ -66,10 +67,22 @@
                         </section>
                         <section>
                             <h4>Available Countries</h4>
+                            <% if (movie.regions.length < 10) { %>
                             <p>
                                 <% movie.regions.forEach(function(region) { %>
                                 <span class="label label-secondary"><span class="flag-icon flag-icon-<%= region%>"></span> <%= region.toUpperCase() %></span>
                                 <% }); %>
+                            </p>
+                            <% } else { %>
+                            <p>
+                                <% for (var i=0; i<9; i++) {  var region = movie.regions.pop(); %>
+                                    <span class="label label-secondary"><span class="flag-icon flag-icon-<%=region%>"></span> <%= region.toUpperCase() %></span>
+                                <% } %>
+                            </p>
+                            <p>
+                                <% movie.regions.forEach(function(region) { %>
+                                    <span class="label label-secondary"><span class="flag-icon flag-icon-<%= region%>"></span> <%= region.toUpperCase() %></span>
+                                <% }); } %>
                             </p>
                         </section>
 

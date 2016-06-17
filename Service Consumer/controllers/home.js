@@ -14,7 +14,7 @@ module.exports = function (app, jsonParser) {
         var region = "us", count = 1, season = null; // Set defaults
         var auth = new Buffer(process.env.API_USER + ":" + process.env.API_PW).toString('base64');
         var movie, regions;
-        var url = 'http://api.netflix.dev:3000/movies?r=ca'
+        var url = 'http://api.netflix.dev:3000/movies'
         var moChr1 = moment().year() + "-12-23"; // 2016-12-23
         var moChr2 = moment().year() + "-12-26"; // 2016-12-26
         var moHal = moment().year() + "-10-31"; // 2016-10-31
@@ -41,6 +41,7 @@ module.exports = function (app, jsonParser) {
                     .end(function (response) {
                         if (response.body.length > 0) {
                             movie = response.body[0];
+                            console.log(movie);
                             callback();
                         } else {
                             callback(new Error("No movies found matching the selected criteria."));
