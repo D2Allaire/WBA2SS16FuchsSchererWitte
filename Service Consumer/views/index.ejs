@@ -44,7 +44,7 @@
                         <h3><%= movie.title %></h3>
                         <ul>
                             <li><%= movie.year %></li>
-                            <li><%= movie.runTime %></li>
+                            <li><%= movie.runtime %></li>
                             <li><%= movie.genre %></li>
                         </ul>
                     </div>
@@ -138,11 +138,13 @@
                             <div id="region-select">
                                 <label class="text-secondary">Current Region: </label>
                                 <select id="region" name="region">
-                  <option value='us' selected>United States of America</option>
-                  <option value='de'>Germany</option>
-                  <option value='ca'>Canada</option>
-                  <option value='se'>Sweden</option>
-                </select>
+                                    <% regions.forEach(function(region) { %>
+                                        <%if (region.code == 'us') { %>
+                                            <option value='<%=region.code%>' selected><%=region.name%></option>
+                                        <% } else { %>
+                                            <option value='<%=region.code%>'><%=region.name%></option>
+                                    <% } }); %>
+                                </select>
                                 <button id="suggest-new">Suggest New</button>
                             </div>
 

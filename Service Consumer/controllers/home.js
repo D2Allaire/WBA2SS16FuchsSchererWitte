@@ -13,7 +13,7 @@ module.exports = function (app, jsonParser) {
     app.get('/', function (req, res) {
         var region = "us", count = 1, season = null; // Set defaults
         var auth = new Buffer(process.env.API_USER + ":" + process.env.API_PW).toString('base64');
-        var movie;
+        var movie, regions;
         var url = 'http://api.netflix.dev:3000/movies?r=ca'
         var moChr1 = moment().year() + "-12-23"; // 2016-12-23
         var moChr2 = moment().year() + "-12-26"; // 2016-12-26
@@ -26,18 +26,38 @@ module.exports = function (app, jsonParser) {
             url = 'http://api.netflix.dev:3000/movies?r=ca&s=halloween'
         }
 
-        unirest.get(url)
-            .headers({ 'Accept': 'application/json', 'Authorization': 'Basic ' + auth })
-            .end(function (response) {
-                if (response.body.length > 0) {
-                    movie = response.body[0];
-                    console.log(movie);
-                    res.render('index', {
-                        movie: movie
+        async.parallel([
+            function (callback) {
+                unirest.get('http://api.netflix.dev:3000/regions')
+                    .headers({ 'Accept': 'application/json', 'Authorization': 'Basic ' + auth })
+                    .end(function (response) {
+                        console.log(response.body);
+                        regions = response.body;
+                        callback();
                     });
-                } else {
-                    res.send("No movies found.");
-                }
-            });
+            },
+            function (callback) {
+                unirest.get(url)
+                    .headers({ 'Accept': 'application/json', 'Authorization': 'Basic ' + auth })
+                    .end(function (response) {
+                        if (response.body.length > 0) {
+                            movie = response.body[0];
+                            callback();
+                        } else {
+                            callback(new Error("No movies found matching the selected criteria."));
+                        }
+                    });
+            }
+        ], function (err) {
+            if (err) {
+                res.status(404).type('text').send(err.message);
+            } else {
+                console.log("Sending EJS.");
+                res.render('index', {
+                    movie: movie,
+                    regions: regions
+                });
+            }
+        });
     });
 }
