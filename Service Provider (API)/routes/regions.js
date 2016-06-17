@@ -8,7 +8,7 @@ var Region = require('../models/region');
 module.exports = function (app, passport, jsonParser) {
     app.get('/regions', passport.authenticate('basic', { session: false }), function (req, res) {
         
-        Region.get(function (result) {
+        Region.getAll(function (result) {
             res.status(200).type('json').json(result);
         });
     });

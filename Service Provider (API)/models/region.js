@@ -11,13 +11,35 @@ var db = require('../config/db').get();
 var Movie = require('./movie');
 var async = require('async');
 
+var that = this;
+
 /**
  * Returns an array of all available regions
  */
-exports.get = function(callback) {
-    db.hgetall("regions", function(err, rep) {
+exports.get = function(id, callback) {
+    db.get('region:' + id, function(err, rep) {
         if (err) throw err;
-        callback(rep);
+        if (rep) {
+            var region = JSON.parse(rep);
+            callback(region);
+        }
+    });
+}
+
+exports.getAll = function(callback) {
+    var regions = [];
+    db.lrange('regions', 0, -1, function(err, rep) {
+        if (err) throw err;
+        regionsArr = rep;
+        
+        async.forEach(regionsArr, function(region, callback) {
+            that.get(region, function(result) {
+                    regions.push(result);
+                    callback();
+            });
+        }, function(err) {
+                callback(regions);
+        });
     });
 }
 
