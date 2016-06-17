@@ -12,6 +12,16 @@ var Movie = require('./movie');
 var async = require('async');
 
 /**
+ * Returns an array of all available regions
+ */
+exports.get = function(callback) {
+    db.hgetall("regions", function(err, rep) {
+        if (err) throw err;
+        callback(rep);
+    });
+}
+
+/**
  * Add a movie to the region
  * region: code of the region
  * movie: movie object to be added
