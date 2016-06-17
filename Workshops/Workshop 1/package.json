@@ -1,0 +1,14 @@
+{
+  "name": "wba2_workshop_1",
+  "version": "1.0.0",
+  "description": "Aufgaben des ersten WBA2 Workshops",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^1.1.3"
+  }
+}
