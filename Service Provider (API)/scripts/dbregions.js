@@ -25,8 +25,11 @@ async.series([
         async.forEach(regions, function (region, callback) {
             db.set('region:' + region.code, JSON.stringify(region), function (err, rep) {
                 if (err) throw err;
-                console.log("Added " + region.name + " to the database.");
-                callback();
+                db.rpush('regions', region.code, function(err, rep) {
+                    if (err) throw err;
+                    console.log("Added " + region.name + " to the database.");
+                    callback();
+                });
             });
         }, function (err) {
             callback();
