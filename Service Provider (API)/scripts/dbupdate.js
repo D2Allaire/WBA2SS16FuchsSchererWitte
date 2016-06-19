@@ -97,7 +97,7 @@ async.series([
                                                     movie.plot = parsedMovie.Plot;
                                                     movie.genre = parsedMovie.Genre;
                                                     movie.imdb_rating = parsedMovie.imdbRating;
-                                                    movie.language = parsedMovie.Language;
+                                                    movie.language = parsedMovie.Language.split(", ");
                                                     callback();
                                                 });
                                         },
