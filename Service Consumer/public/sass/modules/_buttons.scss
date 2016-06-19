@@ -2,7 +2,7 @@
 BUTTONS
 */
 
-button {
+button, input#suggest-new {
   font-weight: 300;
   font-size: 1.5rem;
   text-transform: uppercase;
@@ -11,9 +11,9 @@ button {
   padding: 5px 15px;
   border: none;
   vertical-align: middle;
+}
 
-  &#suggest-new {
-    float: right;
+input#suggest-new {
+    margin-left: 230px;
     background-color: #4e1f37;
-  }
 }

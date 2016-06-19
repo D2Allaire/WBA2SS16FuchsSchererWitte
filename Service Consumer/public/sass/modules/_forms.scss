@@ -12,3 +12,150 @@ select {
     outline:none;
     display: inline-block;
 }
+
+div.popup-position{
+  top: 0;
+  left: 0;
+  position: fixed;
+  width: 100%;
+  height: 120%;
+  background-color: rgba(0,0,0,0.7);
+  display: none;}
+
+div#popup-wrapper {
+  width: 550px;
+  margin: 50px auto;
+  text-align: left; }
+
+div#popup-container {
+  background-color: #FFF;
+  padding: 15px; }
+
+
+  #modal_trigger  {
+      margin: 100px auto;
+       width: 100px;
+       display: block;
+  }
+
+  .btn  {
+      padding: 10px 20px;
+       background:  #F4F4F2;
+  }
+
+  .btn_red  {
+      background:  #ED6347;
+       color:  #FFF;
+  }
+
+  .btn:hover  {
+      background:  #E4E4E2;
+  }
+
+  .btn_red:hover  {
+      background:  #C12B05;
+  }
+
+  a.btn  {
+      color: #666;
+       text-align:  center;
+       text-decoration:  none;
+  }
+
+  a.btn_red  {
+      color:  #FFF;
+  }
+
+  .one_half  {
+      width: 50%;
+       display:  block;
+       float: left;
+  }
+
+  .one_half.last  {
+      width: 45%;
+       margin-left: 5%;
+  }
+
+  /* User Register Form */
+
+.user_register label  {
+    display:  block;
+     margin-bottom: 5px;
+}
+
+.user_register input[type="text"],  .user_register input[type="email"],  .user_register input[type="password"]  {
+    display:  block;
+     width: 90%;
+     padding:  10px;
+     border: 1px solid #DDD;
+     color: #666;
+}
+
+.user_register input[type="checkbox"]  {
+    float: left;
+     margin-right: 5px;
+}
+
+.user_register input[type="checkbox"]+label  {
+    float: left;
+}
+
+
+.user_register .checkbox  {
+    margin-bottom:  10px;
+     clear:  both;
+     overflow:  hidden;
+}
+
+
+
+  .user_login label  {
+      display:  block;
+       margin-bottom: 5px;
+  }
+
+  .user_login input[type="text"],  .user_login input[type="email"],  .user_login input[type="password"]  {
+      display:  block;
+       width: 90%;
+       padding:  10px;
+       border: 1px solid #DDD;
+       color: #666;
+  }
+
+  .user_login input[type="checkbox"]  {
+      float: left;
+       margin-right: 5px;
+  }
+
+  .user_login input[type="checkbox"]+label  {
+      float: left;
+  }
+
+
+  .user_login .checkbox  {
+      margin-bottom:  10px;
+       clear:  both;
+       overflow:  hidden;
+  }
+
+
+.label {
+  display: inline;
+  padding: 0.2em 0.6em 0.3em;
+  font-size: 75%;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.25em;
+  box-sizing: border-box; }
+  .label-primary {
+    background-color: #337ab7; }
+  .label-secondary {
+    background-color: #e5e5e5;
+    color: #5c5c5c; }
+  .label:not(:first-of-type) {
+    margin-left: 7px; }

@@ -6,10 +6,16 @@ div#app {
   justify-content: center;
   align-items: center;
 }
+
 /* Movie Poster */
 div#poster {
-  height: 450px;
+  height: 430px;
   box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+  img {
+    width: 283px;
+	  height: 430px;
+  }
 }
 /* Movie Card */
 div#movie-card {
@@ -37,6 +43,8 @@ div#movie-card {
   }
   div#information {
     background-color: $color-bg;
+    min-height: 420px;
+    position:relative;
     section {
       padding: 1rem 0;
       &:not(:first-of-type) {
@@ -53,11 +61,11 @@ div {
     width: 90%;
     margin-left: 15px;
   }
+}
 
-  &#region-select {
-    margin-top: 10px;
-    padding-bottom: 20px;
-  }
+form#region-select {
+  position:absolute;
+  bottom: 10px;
 }
 
 section:nth-child(2) > p {
