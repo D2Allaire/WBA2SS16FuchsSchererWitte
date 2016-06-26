@@ -11,18 +11,20 @@ It stores all information regarding movies, regions and users in a Redis databas
 API_USER=[Username used for HTTP Basic Auth, the service consumer will use this to access the API]
 API_PW=[Password used for HTTP Basic Auth]
 UNOGS=[UNOGS API Key, from https://market.mashape.com/unogs/unogs]
+API_TMDB=[TMDB API Key, from https://www.themoviedb.org/]
 ```
-3. Run `/scripts/dbupdate.js` and `/scripts/dbseasons.js` once to populate the database.
+3. Run `scripts/dbregions.js`, `/scripts/dbupdate.js` and `/scripts/dbseasons.js` once to populate the database.
 4. Set up a cronjob that runs the dbupdate.js script once every 24 hours. Use [Linux's internal cronjob tool](http://stackoverflow.com/questions/5849402/how-can-you-execute-a-node-js-script-via-a-cron-job) or one of the many npm modules available.
 
 ### Files & Folders
 * `app.js`: Handles initialization of the database and all routes.
 * `config/db.js`: Handles database connections.
-* `libs/`: contains all relevant JSON files for database population
+* `libs/`: contains all relevant JSON files for database population. Some important files are:
     - `regions.js`: Full list of available Netflix regions, along with some additional information. Extracted from the UNOGS-API.
     - `regions_short.js`: List of supported regions by our app, might be expanded in the future. The `id` field is the internal id from UNOGS, necessary for the API queries.
 * `models/ and routes/`: self-explanatory, contain all models and routes.
 * `scripts/`: 
+    - `dbregions.js`: Populates the database with the regions found in `regions_short.json`.
     - `dbupdate.js`: Script that runs on a daily basis and populates the database.
     - `dbseasons.js`: Populates the database with the seasonal movies found in /libs/seasons.
     - `parsecsv.js`: Allows you to parse your own CSV lists exported from IMDB. Utility script.
@@ -64,7 +66,3 @@ SRANDMEMBER region:us:movies => "tt3244512"
 SDIFF region:us:movies user:10:watchlist => ["tt3244512"]
 
 ```
-
-### TODO (Future updates)
-- Use hashids instead of simple incrementing ids for increased security.
-- Allow filtering additionally by genre.
