@@ -9,6 +9,7 @@ The _service consumer_ is responsible for rendering the actual page, and managin
 ```
 API_USER=[Username used for HTTP Basic Auth with the API]
 API_PW=[Password used for HTTP Basic Auth]
+API=[API URL, e.g. http://api.netflix.dev:3000]
 ```
 ### Files & Folders
 * `app.js`: Handles initialization of the database and all routes.
