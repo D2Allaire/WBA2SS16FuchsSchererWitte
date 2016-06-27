@@ -12,7 +12,7 @@ module.exports = function (app, jsonParser, unirest, auth) {
     app.get('/', function (req, res) {
         var region = "us", count = 1, season = null; // Set defaults
         var movie, regions;
-        var url = 'http://api.netflix.dev:3000/movies?r=' + region + '&c=' + count;
+        var url = process.env.API + '/movies?r=' + region + '&c=' + count;
         var moChr1 = moment().year() + "-12-23"; // 2016-12-23
         var moChr2 = moment().year() + "-12-26"; // 2016-12-26
         var moHal = moment().year() + "-10-31"; // 2016-10-31
@@ -26,7 +26,7 @@ module.exports = function (app, jsonParser, unirest, auth) {
 
         async.parallel([
             function (callback) {
-                unirest.get('http://api.netflix.dev:3000/regions')
+                unirest.get(process.env.API + '/regions')
                     .headers({ 'Accept': 'application/json', 'Authorization': 'Basic ' + auth })
                     .end(function (response) {
                         regions = response.body;

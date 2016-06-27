@@ -81,7 +81,7 @@ module.exports = function (app, passport, jsonParser) {
         var movies = req.body.items;
         User.addToWatchlist(req.params.id, movies, function (err) {
             if (err) {
-                res.status(503).type('text').send(err.message);
+                res.status(500).type('text').send(err.message);
             } else {
                 res.status(200).type('text').send("Movie(s) added to watchlist.");
             }
@@ -110,7 +110,7 @@ module.exports = function (app, passport, jsonParser) {
         var movies = req.body.items;
         User.deleteFromWatchlist(req.params.id, movies, function (err) {
             if (err) {
-                res.status(503).type('text').send(err.message);
+                res.status(500).type('text').send(err.message);
             } else {
                 res.status(200).type('text').send("Movie(s) deleted.");
             }
