@@ -94,11 +94,12 @@ div#app {
 
 /* Movie Poster */
 div#poster {
-  height: 430px;
+  height: 447px;
+  width: 300px;
   box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); }
   div#poster img {
-    width: 283px;
-    height: 430px; }
+    width: 300px;
+    height: 447px; }
 
 /* Movie Card */
 div#movie-card {

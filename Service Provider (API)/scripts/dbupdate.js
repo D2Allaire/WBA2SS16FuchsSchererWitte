@@ -107,7 +107,7 @@ async.series([
                                                 .header("Accept", "application/json")
                                                 .end(function (result) {
                                                     if (result.body.movie_results.length > 0) {
-                                                        movie.poster = "https://image.tmdb.org/t/p/w500" + result.body.movie_results[0].poster_path;
+                                                        movie.poster = "https://image.tmdb.org/t/p/w342" + result.body.movie_results[0].poster_path;
                                                     }
                                                     callback();
                                                 });
