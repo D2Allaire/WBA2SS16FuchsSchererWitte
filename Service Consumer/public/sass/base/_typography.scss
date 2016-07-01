@@ -74,6 +74,10 @@ a {
   text-decoration: none;
 }
 
+button > a {
+  color: #fbfbfb;
+}
+
 li {
   color: $title-color;
   font-size: 1.5rem;

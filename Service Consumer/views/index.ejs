@@ -89,69 +89,17 @@
                             </div>
                         </section>
 
-                        <section>
-                            <div class="login">
-                                <div id="popup-box-login" class="popup-position">
-                                    <div id="popup-wrapper">
-                                        <div id="popup-container">
-                                            <div class="user_login">
-                                                <form>
-                                                    <label>Email / Username</label> <input type="text"><br>
-                                                    <label>Password</label> <input type="password"><br>
-
-                                                    <div class="checkbox">
-                                                        <input id="remember" type="checkbox"> <label for="remember">Remember me on this computer</label>
-                                                    </div>
-
-                                                    <div class="action_btns">
-                                                        <div class="one_half">
-                                                            <a class="btn back_btn" href="#" onclick="toggle_visibility('popup-box-login');">Back</a>
-                                                        </div>
-
-                                                        <div class="one_half last">
-                                                            <a class="btn btn_red" href="#">Login</a>
-                                                        </div>
-                                                    </div>
-                                                </form>
-
-                                                <a class="forgot_password" href="#">Forgot password?</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <button><a class="ohne" href="javascript:void(0)" onclick="toggle_visibility('popup-box-login');">Login</a></button>
-
-                                <div id="popup-box-signup" class="popup-position">
-                                    <div id="popup-wrapper">
-                                        <div id="popup-container">
-                                            <div class="user_register">
-                                                <form>
-                                                    <label>Full Name</label> <input type="text"><br>
-                                                    <label>Email Address</label> <input type="email"><br>
-                                                    <label>Password</label> <input type="password"><br>
-
-                                                    <div class="checkbox">
-                                                        <input id="send_updates" type="checkbox"> <label for="send_updates">Send me occasional email updates</label>
-                                                    </div>
-
-                                                    <div class="action_btns">
-                                                        <div class="one_half">
-                                                            <a class="btn back_btn" href="#" onclick="toggle_visibility('popup-box-signup');">Back</a>
-                                                        </div>
-
-                                                        <div class="one_half last">
-                                                            <a class="btn btn_red" href="#">Register</a>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                            <a href="javascript:void(0)" onclick="toggle_visibility('popup-box-signup');">close</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p class="text-secondary" id="login">Or <a href="javascript:void(0)" onclick="toggle_visibility('popup-box-signup');">signup now</a> to be able to mark movies as watched and only get unique recommendations.</p>
-                            </div>
-                            </div>
+                        <section id="user">
+                            <% if (!user) { %>
+                            <button><a class="cd-signin" href="#0">Login</a></button>
+                            <p class="text-secondary" id="login">Or <a class="cd-signup" href="#0">signup now</a> to be able to mark movies as watched and only get unique recommendations.</p>
+                            <% } else { %>
+                            <p>Mark this movie as watched and it won't be recommended to you again.</p>
+                            <form id="watched-check">
+                                <input type="checkbox" name="watched" id="watched" value="watched">Watched <br />
+                            </form>
+                            <p class="text-secondary">Logged in as <%=user.name%>. <a href="/logout">Logout</a>.</p>
+                            <% } %>
                             <form id="region-select">
                                 <label class="text-secondary">Current Region: </label>
                                 <select id="region" name="region">
@@ -163,15 +111,74 @@
                                     <% } }); %>
                                 </select>
                                 <input id="suggest-new" name="submit" type="submit" value="Suggest New">
-                            </div>
-
+                            </form>
                         </section>
                     </div>
                 </div>
             </div>
 
         </div>
+        </div>
     </main>
+
+    <div class="cd-user-modal"> <!-- this is the entire modal form, including the background -->
+		<div class="cd-user-modal-container"> <!-- this is the container wrapper -->
+			<ul class="cd-switcher">
+				<li><a href="#0">Sign in</a></li>
+				<li><a href="#0">New account</a></li>
+			</ul>
+
+			<div id="cd-login"> <!-- log in form -->
+				<form class="cd-form">
+					<p class="fieldset">
+						<label class="image-replace cd-email" for="login-email">E-mail</label>
+						<input class="full-width has-padding has-border" id="login-email" name="login-email" type="email" placeholder="E-mail">
+						<span class="cd-error-message">Error message here!</span>
+					</p>
+
+					<p class="fieldset">
+						<label class="image-replace cd-password" for="login-password">Password</label>
+						<input class="full-width has-padding has-border" id="login-password" name="login-password" type="password"  placeholder="Password">
+						<span class="cd-error-message">Error message here!</span>
+					</p>
+
+					<p class="fieldset">
+						<input class="full-width" type="submit" value="Login">
+					</p>
+				</form>
+				<!-- <a href="#0" class="cd-close-form">Close</a> -->
+			</div> <!-- cd-login -->
+
+			<div id="cd-signup"> <!-- sign up form -->
+				<form class="cd-form">
+					<p class="fieldset">
+						<label class="image-replace cd-username" for="signup-username">Username</label>
+						<input class="full-width has-padding has-border" id="signup-username" name="signup-username" type="text" placeholder="Username">
+						<span class="cd-error-message">Error message here!</span>
+					</p>
+
+					<p class="fieldset">
+						<label class="image-replace cd-email" for="signup-email">E-mail</label>
+						<input class="full-width has-padding has-border" id="signup-email" name="signup-email" type="email" placeholder="E-mail">
+						<span class="cd-error-message">Error message here!</span>
+					</p>
+
+					<p class="fieldset">
+						<label class="image-replace cd-password" for="signup-password">Password</label>
+						<input class="full-width has-padding has-border" id="signup-password" name="signup-password" type="password"  placeholder="Password">
+						<span class="cd-error-message">Error message here!</span>
+					</p>
+
+					<p class="fieldset">
+						<input class="full-width has-padding" type="submit" value="Create account">
+					</p>
+				</form>
+
+				<!-- <a href="#0" class="cd-close-form">Close</a> -->
+			</div> <!-- cd-signup -->
+			<a href="#0" class="cd-close-form">Close</a>
+		</div> <!-- cd-user-modal-container -->
+	</div> <!-- cd-user-modal -->
 
 
     <script src="http://code.jquery.com/jquery-latest.js"></script>

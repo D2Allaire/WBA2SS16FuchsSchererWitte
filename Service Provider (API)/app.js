@@ -4,6 +4,7 @@ var express = require('express');
 var jsonParser = require('body-parser').json();
 var passport = require('passport');
 var BasicStrategy = require('passport-http').BasicStrategy;
+var port = process.env.PORT || 3000;
 
 var app = express();
 
@@ -20,5 +21,5 @@ require('./routes/movies')(app, passport, jsonParser);
 require('./routes/regions')(app, passport, jsonParser);
 
 // Start app
-app.listen(3000);
-console.log("API is running on Port 3000.");
+app.listen(port);
+console.log("API is running on Port " + port);

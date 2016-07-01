@@ -8,7 +8,7 @@ var moment = require('moment');
  * Builds the EJS file with default settings. Checks whether current date maps to one of the holiday seasons,
  * and returns movies based on that.
  */
-module.exports = function (app, jsonParser, unirest, auth) {
+module.exports = function (app, unirest, auth) {
     app.get('/', function (req, res) {
         var region = "us", count = 1, season = null; // Set defaults
         var movie, regions;
@@ -58,7 +58,8 @@ module.exports = function (app, jsonParser, unirest, auth) {
             } else {
                 res.render('index', {
                     movie: movie,
-                    regions: regions
+                    regions: regions,
+                    user: req.user ? req.user : null
                 });
             }
         });

@@ -4,15 +4,15 @@ var User = require('../models/user');
 module.exports = function (app, passport, jsonParser) {
 
     /**
-     * GET /users?name=name
-     * Find a user by his name
+     * GET /users?email=email
+     * Find a user by his email
      */
     app.get('/users', passport.authenticate('basic', { session: false }), jsonParser, function (req, res) {
-        var name = req.query.name || null;
-        if (name == null) {
-            res.status(400).type('text').send("Please filter by username.");
+        var email = req.query.email || null;
+        if (email == null) {
+            res.status(400).type('text').send("Please filter by email.");
         }
-        User.find(name, function (err, result) {
+        User.find(email, function (err, result) {
             if (err) {
                 res.status(404).type('text').send(err.message);
             } else {

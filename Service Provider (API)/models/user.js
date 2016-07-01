@@ -18,11 +18,11 @@ var that = this;
  * user: User object to be inserted
  */
 exports.create = function (user, callback) {
-    // First check if a user with that name already exists
-    db.hexists('users', user.name, function (err, rep) {
+    // First check if a user with that email already exists
+    db.hexists('users', user.email, function (err, rep) {
         if (err) throw err;
         if (rep == 1) {
-            callback(new Error("A user with that name already exists."));
+            callback(new Error("A user with that Email already exists."));
         } else {
             async.series([
                 // Get a new incremented ID for the user
@@ -40,9 +40,9 @@ exports.create = function (user, callback) {
                         callback();
                     });
                 },
-                // Add user to users hash (name -> id)
+                // Add user to users hash (email -> id)
                 function (callback) {
-                    db.hset("users", user.name, user.id, function (err, rep) {
+                    db.hset("users", user.email, user.id, function (err, rep) {
                         if (err) throw err;
                         callback();
                     });
@@ -70,12 +70,12 @@ exports.get = function (id, callback) {
 }
 
 /**
- * Finds a user by his name
- * name: name of the user
+ * Finds a user by his email
+ * email: email of the user
  */
-exports.find = function (name, callback) {
-    // Hash 'users' stores (name -> id) pairs
-    db.hget('users', name, function (err, rep) {
+exports.find = function (email, callback) {
+    // Hash 'users' stores (email -> id) pairs
+    db.hget('users', email, function (err, rep) {
         if (err) throw err;
         if (rep) {
             // Once we have the ID, simply retrieve user:ID key
@@ -87,7 +87,7 @@ exports.find = function (name, callback) {
                 }
             });
         } else {
-            callback(new Error("No user with that name exists."));
+            callback(new Error("No user with that Email exists."));
         }
     });
 }
@@ -108,9 +108,9 @@ exports.save = function (user, callback) {
                         callback();
                     });
                 },
-                // Just in case, add the new name to the users hash (name -> id)
+                // Just in case, add the new email to the users hash (email -> id)
                 function (callback) {
-                    db.hset("users", user.name, user.id, function (err, rep) {
+                    db.hset("users", user.email, user.id, function (err, rep) {
                         if (err) throw err;
                         callback();
                     });

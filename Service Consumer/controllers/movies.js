@@ -1,6 +1,6 @@
 /** Movies Controller **/
 
-module.exports = function (app, jsonParser, unirest, auth) {
+module.exports = function (app, unirest, auth) {
 
     /**
     * GET /movie?r=[region]

@@ -5,12 +5,17 @@
   "main": "app.js",
   "dependencies": {
     "async": "^2.0.0-rc.6",
+    "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.12.4",
+    "cookie-parser": "^1.4.3",
     "dotenv": "^2.0.0",
     "ejs": "^2.4.2",
     "express": "^4.12.4",
+    "express-session": "^1.13.0",
     "fs": "^0.0.2",
     "moment": "^2.13.0",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
     "unirest": "^0.5.0"
   },
   "devDependencies": {},
